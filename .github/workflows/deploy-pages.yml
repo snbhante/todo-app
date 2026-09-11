@@ -34,11 +34,33 @@ jobs:
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: 24
           cache: npm
 
       - name: Install dependencies
         run: npm ci
+
+      - name: Validate Firebase configuration
+        shell: bash
+        run: |
+          missing=0
+          for variable in \
+            NEXT_PUBLIC_FIREBASE_API_KEY \
+            NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN \
+            NEXT_PUBLIC_FIREBASE_DB_URL \
+            NEXT_PUBLIC_FIREBASE_PROJECT_ID \
+            NEXT_PUBLIC_FIREBASE_STORAGE \
+            NEXT_PUBLIC_FIREBASE_SENDER \
+            NEXT_PUBLIC_FIREBASE_APP_ID; do
+            if [ -z "${!variable}" ]; then
+              echo "Missing repository secret: $variable"
+              missing=1
+            fi
+          done
+          if [ "$missing" -ne 0 ]; then
+            echo "Add the missing Firebase values under Settings > Secrets and variables > Actions."
+            exit 1
+          fi
 
       - name: Build static site
         run: npm run build
