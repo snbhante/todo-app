@@ -1,0 +1,145 @@
+"use client";
+
+import { useState } from "react";
+import { useRouter } from "next/navigation";
+import Link from "next/link";
+import { createUserWithEmailAndPassword, sendPasswordResetEmail, signInWithEmailAndPassword } from "firebase/auth";
+import { auth } from "../../firebase";
+
+const iconPath = `${process.env.NEXT_PUBLIC_BASE_PATH ?? ""}/icon.svg`;
+
+export default function AuthForm({ isLogin }: { isLogin: boolean }) {
+  const router = useRouter();
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [resetSent, setResetSent] = useState(false);
+
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    setError("");
+
+    const normalizedEmail = email.trim();
+    if (!normalizedEmail || !password.trim()) {
+      setError("Please enter both email and password.");
+      return;
+    }
+
+    if (password.length < 6) {
+      setError("Password must be at least 6 characters long.");
+      return;
+    }
+
+    try {
+      setIsSubmitting(true);
+      if (isLogin) {
+        await signInWithEmailAndPassword(auth, normalizedEmail, password);
+      } else {
+        await createUserWithEmailAndPassword(auth, normalizedEmail, password);
+      }
+
+      router.push("/");
+      router.refresh();
+    } catch (error: unknown) {
+      const code = typeof error === "object" && error !== null && "code" in error ? String(error.code) : "";
+      const messages: Record<string, string> = {
+        "auth/invalid-credential": "Email or password is incorrect.",
+        "auth/email-already-in-use": "An account already exists with this email.",
+        "auth/invalid-email": "Please enter a valid email address.",
+        "auth/too-many-requests": "Too many attempts. Please try again shortly.",
+      };
+      setError(messages[code] ?? "Authentication failed. Please try again.");
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  const handlePasswordReset = async () => {
+    const normalizedEmail = email.trim();
+    setError("");
+    setResetSent(false);
+    if (!normalizedEmail) {
+      setError("Enter your email address first.");
+      return;
+    }
+    try {
+      setIsSubmitting(true);
+      await sendPasswordResetEmail(auth, normalizedEmail);
+      setResetSent(true);
+    } catch {
+      setError("We could not send a reset email. Check the address and try again.");
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  return (
+    <form
+      onSubmit={handleSubmit}
+      className="w-full max-w-md rounded-[28px] border border-violet-400/20 bg-slate-900/80 p-5 text-slate-50 shadow-2xl shadow-violet-950/40 backdrop-blur-xl sm:p-8"
+    >
+      <div className="mb-6 text-center">
+        <img src={iconPath} alt="Luma Todo" className="mx-auto mb-4 h-16 w-16" />
+        <p className="text-xs font-semibold uppercase tracking-[0.25em] text-violet-300">Welcome</p>
+        <h2 className="mt-3 text-3xl font-bold">{isLogin ? "Login" : "Create account"}</h2>
+        <p className="mt-2 text-sm text-slate-400">{isLogin ? "Pick up where you left off." : "Start organizing your day."}</p>
+      </div>
+
+      <div className="space-y-4">
+        <label className="block">
+          <span className="mb-2 block text-sm font-medium text-slate-200">Email</span>
+          <input
+            type="email"
+            autoComplete="email"
+            placeholder="you@example.com"
+            value={email}
+            onChange={(event) => setEmail(event.target.value)}
+            className="w-full rounded-xl border border-slate-700 bg-slate-950/80 px-4 py-3 text-slate-50 placeholder:text-slate-400"
+          />
+        </label>
+
+        <label className="block">
+          <span className="mb-2 block text-sm font-medium text-slate-200">Password</span>
+          <input
+            type="password"
+            autoComplete={isLogin ? "current-password" : "new-password"}
+            placeholder="••••••••"
+            value={password}
+            onChange={(event) => setPassword(event.target.value)}
+            className="w-full rounded-xl border border-slate-700 bg-slate-950/80 px-4 py-3 text-slate-50 placeholder:text-slate-400"
+          />
+        </label>
+
+        {error && (
+          <p role="alert" className="rounded-xl border border-rose-400/30 bg-rose-500/10 px-3 py-2.5 text-sm text-rose-200">
+            {error}
+          </p>
+        )}
+
+        <button
+          type="submit"
+          disabled={isSubmitting}
+          className="mt-2 min-h-12 w-full rounded-xl bg-gradient-to-r from-violet-600 to-cyan-500 px-4 py-3 font-semibold text-white shadow-lg shadow-violet-900/30 transition hover:brightness-110 disabled:cursor-not-allowed disabled:opacity-60"
+        >
+          {isSubmitting ? "Please wait..." : isLogin ? "Login" : "Create account"}
+        </button>
+
+        {isLogin && (
+          <button type="button" onClick={handlePasswordReset} disabled={isSubmitting} className="w-full text-sm font-medium text-slate-400 underline decoration-slate-600 underline-offset-4 hover:text-white disabled:opacity-50">
+            Forgot password?
+          </button>
+        )}
+
+        {resetSent && <p role="status" className="rounded-xl border border-emerald-400/25 bg-emerald-500/10 px-3 py-2.5 text-sm text-emerald-200">Reset email sent. Check your inbox.</p>}
+
+        <p className="text-center text-sm text-slate-400">
+          {isLogin ? "New to Luma Todo?" : "Already have an account?"}{" "}
+          <Link href={isLogin ? "/signup" : "/login"} className="font-semibold text-cyan-300 underline decoration-cyan-400/40 underline-offset-4 hover:text-cyan-200">
+            {isLogin ? "Create an account" : "Log in"}
+          </Link>
+        </p>
+      </div>
+    </form>
+  );
+}
