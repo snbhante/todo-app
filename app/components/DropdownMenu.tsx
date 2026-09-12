@@ -38,7 +38,7 @@ export default function DropdownMenu<T extends string>({ value, options, onChang
         onClick={() => setOpen((current) => !current)}
       >
         <span>{selected?.label}</span>
-        <span className="dropdown-chevron" aria-hidden="true">⌄</span>
+        <span className={`dropdown-chevron ${open ? "dropdown-chevron-open" : ""}`} aria-hidden="true" />
       </button>
       {open && (
         <div className="dropdown-list" role="listbox" aria-label={label}>
