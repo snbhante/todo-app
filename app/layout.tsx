@@ -1,5 +1,6 @@
 import "./globals.css";
 import type { Metadata } from "next";
+import ThemeProvider from "./components/ThemeProvider";
 
 const basePath = process.env.NEXT_PUBLIC_BASE_PATH ?? "";
 
@@ -16,7 +17,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="en" suppressHydrationWarning>
       <body suppressHydrationWarning className="min-h-screen bg-slate-950 text-slate-100 antialiased">
-        {children}
+        <ThemeProvider>{children}</ThemeProvider>
       </body>
     </html>
   );

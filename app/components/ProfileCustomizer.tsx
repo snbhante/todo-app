@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { onValue, ref, set } from "firebase/database";
+import { onValue, ref, update } from "firebase/database";
 import type { User } from "firebase/auth";
 import { db } from "../../firebase";
 
@@ -75,7 +75,7 @@ export default function ProfileCustomizer({ user, onPhotoChange }: ProfileCustom
     setStatus("");
     setError("");
     try {
-      await set(ref(db, `profiles/${user.uid}`), { bio: nextBio.slice(0, MAX_BIO_LENGTH), photoUrl: nextPhoto, updatedAt: Date.now() });
+      await update(ref(db, `profiles/${user.uid}`), { bio: nextBio.slice(0, MAX_BIO_LENGTH), photoUrl: nextPhoto, updatedAt: Date.now() });
       setBio(nextBio.slice(0, MAX_BIO_LENGTH));
       setPhotoUrl(nextPhoto);
       onPhotoChange(nextPhoto);

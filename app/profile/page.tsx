@@ -7,6 +7,7 @@ import { auth } from "../../firebase";
 import AccountSecurity from "../components/AccountSecurity";
 import PageShell from "../components/PageShell";
 import ProfileCustomizer from "../components/ProfileCustomizer";
+import PreferencesPanel from "../components/PreferencesPanel";
 
 export default function ProfilePage() {
   const [user] = useAuthState(auth);
@@ -58,6 +59,7 @@ export default function ProfilePage() {
         </div>
 
         <ProfileCustomizer user={user} onPhotoChange={handlePhotoChange} />
+        <PreferencesPanel user={user} />
         <AccountSecurity user={user} />
 
       </div>
