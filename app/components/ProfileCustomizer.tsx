@@ -126,16 +126,14 @@ export default function ProfileCustomizer({ user, onPhotoChange }: ProfileCustom
   return (
     <section className="profile-customizer" aria-labelledby="profile-customizer-title">
       <div className="customizer-heading">
-        <div><p className="eyebrow">Personal details</p><h3 id="profile-customizer-title">Make your profile yours</h3><p>Choose a photo and a short introduction for your workspace.</p></div>
-        <div className="profile-preview">{photoUrl ? <img src={photoUrl} alt="Profile preview" /> : <span>{user.email?.charAt(0).toUpperCase() ?? "U"}</span>}</div>
+        <div><p className="eyebrow">Personal details</p><h3 id="profile-customizer-title">Make your profile yours</h3><p>Update your photo and short introduction from one simple editor.</p></div>
       </div>
 
-      <div className="profile-photo-grid">
-        <div className="profile-option-card"><div><h4>Upload a photo</h4><p>We resize it to 512px and compress it before saving.</p></div><label className="button-primary profile-file-button">Choose image<input type="file" accept="image/png,image/jpeg,image/webp" onChange={(event) => void handleFile(event.target.files?.[0])} disabled={busy} /></label></div>
-        <div className="profile-option-card"><div><h4>Use an image link</h4><p>Paste a public image URL from another service.</p></div><div className="profile-link-row"><input value={linkInput} onChange={(event) => setLinkInput(event.target.value)} placeholder="https://..." aria-label="Profile image URL" className="control-input" /><button type="button" onClick={saveLink} disabled={busy} className="button-quiet">Use link</button></div></div>
+      <div className="profile-media-editor">
+        <div className="profile-media-preview"><div className="profile-preview">{photoUrl ? <img src={photoUrl} alt="Profile preview" /> : <span>{user.email?.charAt(0).toUpperCase() ?? "U"}</span>}</div><div><h4>Profile image</h4><p>Use an upload or a public image link. Uploaded images are resized and compressed.</p></div></div>
+        <div className="profile-media-controls"><label className="button-primary profile-file-button">Choose image<input type="file" accept="image/png,image/jpeg,image/webp" onChange={(event) => void handleFile(event.target.files?.[0])} disabled={busy} /></label>{photoUrl && <button type="button" onClick={removePhoto} disabled={busy} className="profile-remove-button">Remove</button>}</div>
+        <div className="profile-link-row"><input value={linkInput} onChange={(event) => setLinkInput(event.target.value)} placeholder="Paste an image URL (optional)" aria-label="Profile image URL" className="control-input" /><button type="button" onClick={saveLink} disabled={busy || !linkInput.trim()} className="button-quiet">Use link</button></div>
       </div>
-
-      {photoUrl && <div className="profile-photo-actions"><button type="button" onClick={removePhoto} disabled={busy} className="profile-remove-button">Remove profile image</button><span>Use your initials whenever you want a fresh start.</span></div>}
 
       <label className="profile-bio-field"><span>Bio <small>{bio.length}/{MAX_BIO_LENGTH}</small></span><textarea value={bio} maxLength={MAX_BIO_LENGTH} onChange={(event) => setBio(event.target.value)} placeholder="A little about you..." rows={4} className="control-input" /></label>
       <div className="profile-save-row"><button type="button" onClick={() => void saveProfile(bio, photoUrl)} disabled={busy} className="button-primary">{busy ? "Saving..." : "Save profile"}</button>{status && <p role="status" className="alert-success">{status}</p>}{error && <p role="alert" className="alert-error">{error}</p>}</div>

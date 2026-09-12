@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { createUserWithEmailAndPassword, sendPasswordResetEmail, signInWithEmailAndPassword } from "firebase/auth";
 import { auth } from "../../firebase";
+import PasswordField from "./PasswordField";
 
 const iconPath = `${process.env.NEXT_PUBLIC_BASE_PATH ?? ""}/icon.svg`;
 
@@ -98,14 +99,7 @@ export default function AuthForm({ isLogin }: { isLogin: boolean }) {
 
         <label className="form-label">
           <span>Password</span>
-          <input
-            type="password"
-            autoComplete={isLogin ? "current-password" : "new-password"}
-            placeholder="••••••••"
-            value={password}
-            onChange={(event) => setPassword(event.target.value)}
-            className="control-input w-full"
-          />
+          <PasswordField value={password} onChange={setPassword} autoComplete={isLogin ? "current-password" : "new-password"} placeholder="Enter your password" ariaLabel="Password" className="w-full" />
         </label>
 
         {error && (

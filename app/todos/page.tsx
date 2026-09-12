@@ -5,7 +5,7 @@ import PageShell from "../components/PageShell";
 
 export default function TodosPage() {
   return (
-    <PageShell eyebrow="Your task space" title="Plan your day with clarity">
+    <PageShell mode="tasks" eyebrow="Your task space" title="Plan your day with clarity">
       <TodoList />
     </PageShell>
   );

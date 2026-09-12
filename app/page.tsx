@@ -1,16 +1,28 @@
 "use client";
 
 import { useSyncExternalStore } from "react";
+import { useEffect, useState } from "react";
 import { useAuthState } from "react-firebase-hooks/auth";
 import Link from "next/link";
-import { auth } from "../firebase";
+import { onValue, ref } from "firebase/database";
+import { auth, db } from "../firebase";
 import TodoList from "./components/TodoList";
 
 const iconPath = `${process.env.NEXT_PUBLIC_BASE_PATH ?? ""}/icon.svg`;
 
 export default function HomePage() {
   const [user] = useAuthState(auth);
+  const [profilePhoto, setProfilePhoto] = useState("");
   const isHydrated = useSyncExternalStore(() => () => undefined, () => true, () => false);
+
+  useEffect(() => {
+    if (!user) {
+      return;
+    }
+    return onValue(ref(db, `profiles/${user.uid}/photoUrl`), (snapshot) => {
+      setProfilePhoto(typeof snapshot.val() === "string" ? snapshot.val() : "");
+    });
+  }, [user]);
 
   if (!isHydrated) {
     return (
@@ -39,11 +51,9 @@ export default function HomePage() {
         <header className="app-header">
           <Link href="/" className="brand-link">
             <img src={iconPath} alt="Luma Todo" className="brand-mark" />
-            <span className="font-bold tracking-tight">Luma Todo</span>
+            <span className="brand-name">Luma Todo</span>
           </Link>
-          <span className="hidden items-center gap-2 rounded-full border border-emerald-400/20 bg-emerald-400/10 px-3 py-1.5 text-xs font-medium text-emerald-200 sm:flex">
-            <span className="h-1.5 w-1.5 rounded-full bg-emerald-300" /> Your calm workspace
-          </span>
+          {!user ? <div className="home-header-action"><span>Already have an account?</span><Link href="/login" className="button-quiet">Log in</Link></div> : <div className="home-auth-actions"><Link href="/profile" className="home-profile-link" aria-label="Open profile" title="Open profile">{profilePhoto ? <img src={profilePhoto} alt="" /> : <span>{user.email?.charAt(0).toUpperCase() ?? "U"}</span>}</Link><button type="button" onClick={() => void auth.signOut()} className="home-logout">Log out</button></div>}
         </header>
 
         <div className="page-content">
@@ -56,20 +66,23 @@ export default function HomePage() {
         {user ? (
           <TodoList />
         ) : (
-          <section className="profile-access-card home-access-card" aria-labelledby="home-access-title">
-            <div className="profile-access-icon" aria-hidden="true">✓</div>
+          <section className="home-access-card" aria-labelledby="home-access-title">
+            <div className="home-access-icon" aria-hidden="true">✓</div>
+            <p className="eyebrow">Start with one clear next step</p>
             <h2 id="home-access-title" className="profile-access-title">Sign in to unlock your task board</h2>
             <p className="profile-access-copy">Keep your priorities, progress, and daily plans together in one focused space.</p>
             <div className="profile-access-actions">
               <Link href="/login" className="button-primary">Login to continue</Link>
               <Link href="/signup" className="button-quiet">Create an account</Link>
             </div>
-            <Link href="/" className="profile-access-home">
-              Return to home
-            </Link>
+            <div className="home-access-benefits"><span><b>✓</b> Live sync</span><span><b>✓</b> Private space</span><span><b>✓</b> Simple focus</span></div>
           </section>
         )}
         </div>
+        <footer className="app-footer">
+          <span>Created by</span>
+          <a href="https://github.com/snbhante" target="_blank" rel="noreferrer">SarbaNanda Bhikkhu</a>
+        </footer>
       </div>
     </main>
   );

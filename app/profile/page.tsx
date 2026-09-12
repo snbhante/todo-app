@@ -48,40 +48,18 @@ export default function ProfilePage() {
   }
 
   return (
-    <PageShell eyebrow="Account" title="Manage your Luma Todo account">
+    <PageShell mode="profile" eyebrow="Your account" title="A home for your profile">
       <div className="profile-card">
-        <div className="profile-heading">
-          <div>
-            <p className="text-xs uppercase tracking-[0.28em] text-violet-300">Profile</p>
-            <h2 className="mt-2 text-3xl font-bold text-white">My Account</h2>
-          </div>
-          <div className="profile-avatar">
+        <div className="profile-hero">
+          <div className="profile-hero-avatar">
             {photoUrl ? <img src={photoUrl} alt="Your profile" /> : user.email?.charAt(0).toUpperCase() ?? "U"}
           </div>
-        </div>
-
-        <div className="profile-summary">
-          <div className="profile-info-row">
-            <span className="profile-info-icon" aria-hidden="true">@</span>
-            <div className="profile-info-copy"><span className="profile-info-label">Email address</span><strong>{user.email}</strong></div>
-          </div>
-          <div className="profile-info-row">
-            <span className="profile-info-icon profile-info-icon-success" aria-hidden="true">✓</span>
-            <div className="profile-info-copy"><span className="profile-info-label">Account status</span><strong className="profile-status-pill">Active</strong></div>
-          </div>
+          <div className="profile-hero-copy"><p className="eyebrow">Personal profile</p><h2>My Account</h2><p>Keep your identity, preferences, and security in one place.</p><div className="profile-hero-meta"><span>{user.email}</span><b>Active account</b></div></div>
         </div>
 
         <ProfileCustomizer user={user} onPhotoChange={handlePhotoChange} />
         <AccountSecurity user={user} />
 
-        <div className="profile-actions">
-          <button onClick={() => auth.signOut()} className="button-danger">
-            Logout
-          </button>
-          <Link href="/" className="button-quiet">
-            Back home
-          </Link>
-        </div>
       </div>
     </PageShell>
   );

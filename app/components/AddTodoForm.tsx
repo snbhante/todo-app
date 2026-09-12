@@ -18,7 +18,7 @@ export default function AddTodoForm({ addTodo }: { addTodo: (text: string, prior
 
   return (
     <form onSubmit={handleSubmit} className="add-todo-form">
-      <div className="flex flex-col gap-3 lg:flex-row">
+      <div className="add-todo-row">
         <div className="add-todo-input-wrap">
           <span className="add-todo-input-icon" aria-hidden="true">✦</span>
           <input
@@ -31,7 +31,7 @@ export default function AddTodoForm({ addTodo }: { addTodo: (text: string, prior
         <div className="priority-picker priority-picker-add">
           <DropdownMenu value={priority} onChange={setPriority} label="Task priority" options={[{ value: "low", label: "Low priority" }, { value: "medium", label: "Medium priority" }, { value: "high", label: "High priority" }]} />
         </div>
-        <button type="submit" className="button-primary min-h-12 px-5">
+        <button type="submit" className="button-primary add-todo-submit">
           Add task
         </button>
       </div>
