@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useSyncExternalStore } from "react";
 import { useAuthState } from "react-firebase-hooks/auth";
 import Link from "next/link";
 import { auth } from "../firebase";
@@ -10,11 +10,7 @@ const iconPath = `${process.env.NEXT_PUBLIC_BASE_PATH ?? ""}/icon.svg`;
 
 export default function HomePage() {
   const [user] = useAuthState(auth);
-  const [isHydrated, setIsHydrated] = useState(false);
-
-  useEffect(() => {
-    setIsHydrated(true);
-  }, []);
+  const isHydrated = useSyncExternalStore(() => () => undefined, () => true, () => false);
 
   if (!isHydrated) {
     return (
@@ -33,17 +29,17 @@ export default function HomePage() {
   }
 
   return (
-    <main className="relative flex min-h-screen items-center justify-center overflow-hidden p-4 sm:p-6 lg:p-8">
+    <main className="relative flex min-h-screen items-center justify-center overflow-hidden p-3 sm:p-6 lg:p-8">
       <div className="pointer-events-none absolute inset-0 overflow-hidden">
         <div className="absolute left-[-8%] top-[-6%] h-72 w-72 rounded-full bg-violet-500/20 blur-3xl" />
         <div className="absolute bottom-[-10%] right-[-8%] h-80 w-80 rounded-full bg-cyan-500/20 blur-3xl" />
       </div>
 
-      <div className="relative w-full max-w-6xl overflow-hidden rounded-[32px] border border-white/10 bg-slate-950/45 shadow-[0_40px_100px_rgba(15,23,42,0.8)] backdrop-blur-2xl">
+      <div className="relative w-full max-w-6xl overflow-hidden rounded-[1.75rem] border border-white/10 bg-slate-950/45 shadow-[0_40px_100px_rgba(15,23,42,0.8)] backdrop-blur-2xl">
         <header className="flex items-center justify-between border-b border-white/10 px-5 py-4 sm:px-8">
           <Link href="/" className="flex items-center gap-3 text-white">
             <img src={iconPath} alt="Luma Todo" className="h-11 w-11 drop-shadow-[0_8px_14px_rgba(34,211,238,0.2)]" />
-            <span className="text-lg font-bold tracking-tight">Luma Todo</span>
+            <span className="font-bold tracking-tight">Luma Todo</span>
           </Link>
           <span className="hidden items-center gap-2 rounded-full border border-emerald-400/20 bg-emerald-400/10 px-3 py-1.5 text-xs font-medium text-emerald-200 sm:flex">
             <span className="h-1.5 w-1.5 rounded-full bg-emerald-300" /> Your calm workspace
@@ -52,13 +48,9 @@ export default function HomePage() {
 
         <div className="px-4 py-7 sm:px-8 sm:py-10 lg:px-12">
           <div className="mb-8 flex flex-col items-center text-center">
-            <span className="mb-4 inline-flex rounded-full border border-violet-300/30 bg-violet-500/10 px-4 py-1.5 text-[10px] font-semibold uppercase tracking-[0.3em] text-violet-100">
-              Productivity Flow
-            </span>
-            <h1 className="text-4xl font-black tracking-tight text-white sm:text-5xl lg:text-6xl">Make space for what matters.</h1>
-            <p className="mt-4 max-w-2xl text-sm leading-6 text-slate-300 sm:text-base">
-              Organize your day with a calm, beautiful workspace built for focus.
-            </p>
+            <span className="eyebrow">A quieter way to get things done</span>
+            <h1 className="mt-4 text-4xl font-black tracking-tight text-white sm:text-5xl lg:text-6xl">Make space for what matters.</h1>
+            <p className="mt-4 max-w-2xl text-sm leading-6 text-slate-300 sm:text-base">A calm, beautifully organized workspace for the tasks that deserve your attention.</p>
           </div>
 
         {user ? (

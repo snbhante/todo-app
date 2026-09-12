@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import { useSyncExternalStore } from "react";
 import { useAuthState } from "react-firebase-hooks/auth";
 import { auth } from "../../firebase";
 import AccountSecurity from "../components/AccountSecurity";
@@ -9,11 +9,7 @@ import PageShell from "../components/PageShell";
 
 export default function ProfilePage() {
   const [user] = useAuthState(auth);
-  const [isHydrated, setIsHydrated] = useState(false);
-
-  useEffect(() => {
-    setIsHydrated(true);
-  }, []);
+  const isHydrated = useSyncExternalStore(() => () => undefined, () => true, () => false);
 
   if (!isHydrated) {
     return (

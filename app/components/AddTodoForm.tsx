@@ -1,33 +1,40 @@
 "use client";
 
 import { useState } from "react";
+import type { Priority } from "./TodoItem";
 
-export default function AddTodoForm({ addTodo }: { addTodo: (text: string) => void }) {
+export default function AddTodoForm({ addTodo }: { addTodo: (text: string, priority: Priority) => void | Promise<void> }) {
   const [newTodo, setNewTodo] = useState("");
+  const [priority, setPriority] = useState<Priority>("medium");
 
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     const trimmed = newTodo.trim();
     if (!trimmed) return;
-    addTodo(trimmed);
+    void addTodo(trimmed, priority);
     setNewTodo("");
   };
 
   return (
-    <form onSubmit={handleSubmit} className="mb-6 rounded-[22px] border border-white/10 bg-slate-950/40 p-3 shadow-inner shadow-slate-950/60 sm:p-4">
-      <div className="flex flex-col gap-3 sm:flex-row">
+    <form onSubmit={handleSubmit} className="mb-6 rounded-2xl border border-white/10 bg-slate-950/45 p-3 shadow-inner shadow-slate-950/60 sm:p-4">
+      <div className="flex flex-col gap-3 lg:flex-row">
         <div className="relative flex-1">
           <span className="pointer-events-none absolute inset-y-0 left-4 flex items-center text-slate-500">✦</span>
           <input
             value={newTodo}
             onChange={(event) => setNewTodo(event.target.value)}
             placeholder="Add a new task..."
-            className="w-full rounded-2xl border border-slate-700 bg-slate-900/80 py-3 pl-10 pr-4 text-slate-50 placeholder:text-slate-400 focus:border-violet-400 focus:outline-none focus:ring-2 focus:ring-violet-500/30"
+            className="control-input w-full py-3 pl-10"
           />
         </div>
+        <select value={priority} onChange={(event) => setPriority(event.target.value as Priority)} className="control-input lg:w-44" aria-label="Task priority">
+          <option value="low">Low priority</option>
+          <option value="medium">Medium priority</option>
+          <option value="high">High priority</option>
+        </select>
         <button
           type="submit"
-          className="min-h-12 rounded-2xl bg-gradient-to-r from-violet-600 via-indigo-500 to-cyan-500 px-5 py-3 font-semibold text-white shadow-lg shadow-violet-900/40 transition hover:translate-y-[-1px] hover:brightness-110"
+          className="button-primary min-h-12"
         >
           Add task
         </button>
