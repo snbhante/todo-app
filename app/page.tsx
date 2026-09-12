@@ -14,8 +14,8 @@ export default function HomePage() {
 
   if (!isHydrated) {
     return (
-      <main className="flex min-h-screen items-center justify-center p-6">
-        <div className="w-full max-w-5xl rounded-[28px] border border-white/10 bg-white/5 p-6 shadow-2xl shadow-violet-950/50 backdrop-blur-xl sm:p-8">
+      <main className="page-frame flex items-center justify-center">
+        <div className="app-frame max-w-5xl p-6 sm:p-8">
           <div className="mb-8 flex flex-col items-center text-center">
             <span className="mb-4 inline-flex rounded-full border border-violet-400/30 bg-violet-500/10 px-3 py-1 text-xs font-semibold uppercase tracking-[0.2em] text-violet-200">
               Productivity Flow
@@ -29,16 +29,16 @@ export default function HomePage() {
   }
 
   return (
-    <main className="relative flex min-h-screen items-center justify-center overflow-hidden p-3 sm:p-6 lg:p-8">
+    <main className="page-frame flex items-center justify-center">
       <div className="pointer-events-none absolute inset-0 overflow-hidden">
         <div className="absolute left-[-8%] top-[-6%] h-72 w-72 rounded-full bg-violet-500/20 blur-3xl" />
         <div className="absolute bottom-[-10%] right-[-8%] h-80 w-80 rounded-full bg-cyan-500/20 blur-3xl" />
       </div>
 
-      <div className="relative w-full max-w-6xl overflow-hidden rounded-[1.75rem] border border-white/10 bg-slate-950/45 shadow-[0_40px_100px_rgba(15,23,42,0.8)] backdrop-blur-2xl">
-        <header className="flex items-center justify-between border-b border-white/10 px-5 py-4 sm:px-8">
-          <Link href="/" className="flex items-center gap-3 text-white">
-            <img src={iconPath} alt="Luma Todo" className="h-11 w-11 drop-shadow-[0_8px_14px_rgba(34,211,238,0.2)]" />
+      <div className="app-frame">
+        <header className="app-header">
+          <Link href="/" className="brand-link">
+            <img src={iconPath} alt="Luma Todo" className="brand-mark" />
             <span className="font-bold tracking-tight">Luma Todo</span>
           </Link>
           <span className="hidden items-center gap-2 rounded-full border border-emerald-400/20 bg-emerald-400/10 px-3 py-1.5 text-xs font-medium text-emerald-200 sm:flex">
@@ -46,8 +46,8 @@ export default function HomePage() {
           </span>
         </header>
 
-        <div className="px-4 py-7 sm:px-8 sm:py-10 lg:px-12">
-          <div className="mb-8 flex flex-col items-center text-center">
+        <div className="page-content">
+          <div className="page-heading mb-8">
             <span className="eyebrow">A quieter way to get things done</span>
             <h1 className="mt-4 text-4xl font-black tracking-tight text-white sm:text-5xl lg:text-6xl">Make space for what matters.</h1>
             <p className="mt-4 max-w-2xl text-sm leading-6 text-slate-300 sm:text-base">A calm, beautifully organized workspace for the tasks that deserve your attention.</p>
@@ -56,19 +56,18 @@ export default function HomePage() {
         {user ? (
           <TodoList />
         ) : (
-          <div className="mx-auto flex max-w-lg flex-col items-center gap-5 rounded-[28px] border border-white/10 bg-slate-900/60 p-8 text-center shadow-[0_20px_60px_rgba(79,70,229,0.18)]">
-            <div className="flex h-14 w-14 items-center justify-center rounded-2xl border border-violet-300/20 bg-violet-500/10 text-2xl text-violet-200 shadow-lg shadow-violet-900/30">✓</div>
-            <p className="text-xl font-semibold text-slate-100">Sign in to unlock your task board</p>
-            <Link
-              href="/login"
-              className="inline-flex w-full items-center justify-center rounded-2xl bg-gradient-to-r from-violet-500 via-indigo-500 to-cyan-400 px-5 py-3.5 text-base font-semibold text-white shadow-lg shadow-violet-900/40 transition hover:brightness-110"
-            >
-              Login to continue
+          <section className="profile-access-card home-access-card" aria-labelledby="home-access-title">
+            <div className="profile-access-icon" aria-hidden="true">✓</div>
+            <h2 id="home-access-title" className="profile-access-title">Sign in to unlock your task board</h2>
+            <p className="profile-access-copy">Keep your priorities, progress, and daily plans together in one focused space.</p>
+            <div className="profile-access-actions">
+              <Link href="/login" className="button-primary">Login to continue</Link>
+              <Link href="/signup" className="button-quiet">Create an account</Link>
+            </div>
+            <Link href="/" className="profile-access-home">
+              Return to home
             </Link>
-            <Link href="/signup" className="text-sm text-slate-300 underline decoration-slate-500 underline-offset-4 transition hover:text-white">
-              Create an account
-            </Link>
-          </div>
+          </section>
         )}
         </div>
       </div>

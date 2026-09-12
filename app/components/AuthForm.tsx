@@ -75,44 +75,41 @@ export default function AuthForm({ isLogin }: { isLogin: boolean }) {
   };
 
   return (
-    <form
-      onSubmit={handleSubmit}
-      className="w-full max-w-md rounded-[28px] border border-violet-400/20 bg-slate-900/80 p-5 text-slate-50 shadow-2xl shadow-violet-950/40 backdrop-blur-xl sm:p-8"
-    >
-      <div className="mb-6 text-center">
-        <img src={iconPath} alt="Luma Todo" className="mx-auto mb-4 h-16 w-16" />
-        <p className="text-xs font-semibold uppercase tracking-[0.25em] text-violet-300">Welcome</p>
+    <form onSubmit={handleSubmit} className="auth-card text-slate-50">
+      <div className="auth-header">
+        <img src={iconPath} alt="Luma Todo" className="auth-logo" />
+        <p className="eyebrow">Welcome</p>
         <h2 className="mt-3 text-3xl font-bold">{isLogin ? "Login" : "Create account"}</h2>
         <p className="mt-2 text-sm text-slate-400">{isLogin ? "Pick up where you left off." : "Start organizing your day."}</p>
       </div>
 
-      <div className="space-y-4">
-        <label className="block">
-          <span className="mb-2 block text-sm font-medium text-slate-200">Email</span>
+      <div className="form-stack">
+        <label className="form-label">
+          <span>Email</span>
           <input
             type="email"
             autoComplete="email"
             placeholder="you@example.com"
             value={email}
             onChange={(event) => setEmail(event.target.value)}
-            className="w-full rounded-xl border border-slate-700 bg-slate-950/80 px-4 py-3 text-slate-50 placeholder:text-slate-400"
+            className="control-input w-full"
           />
         </label>
 
-        <label className="block">
-          <span className="mb-2 block text-sm font-medium text-slate-200">Password</span>
+        <label className="form-label">
+          <span>Password</span>
           <input
             type="password"
             autoComplete={isLogin ? "current-password" : "new-password"}
             placeholder="••••••••"
             value={password}
             onChange={(event) => setPassword(event.target.value)}
-            className="w-full rounded-xl border border-slate-700 bg-slate-950/80 px-4 py-3 text-slate-50 placeholder:text-slate-400"
+            className="control-input w-full"
           />
         </label>
 
         {error && (
-          <p role="alert" className="rounded-xl border border-rose-400/30 bg-rose-500/10 px-3 py-2.5 text-sm text-rose-200">
+          <p role="alert" className="alert-error">
             {error}
           </p>
         )}
@@ -120,18 +117,18 @@ export default function AuthForm({ isLogin }: { isLogin: boolean }) {
         <button
           type="submit"
           disabled={isSubmitting}
-          className="mt-2 min-h-12 w-full rounded-xl bg-gradient-to-r from-violet-600 to-cyan-500 px-4 py-3 font-semibold text-white shadow-lg shadow-violet-900/30 transition hover:brightness-110 disabled:cursor-not-allowed disabled:opacity-60"
+          className="button-primary auth-submit mt-2 w-full disabled:cursor-not-allowed disabled:opacity-60"
         >
           {isSubmitting ? "Please wait..." : isLogin ? "Login" : "Create account"}
         </button>
 
         {isLogin && (
-          <button type="button" onClick={handlePasswordReset} disabled={isSubmitting} className="w-full text-sm font-medium text-slate-400 underline decoration-slate-600 underline-offset-4 hover:text-white disabled:opacity-50">
+          <button type="button" onClick={handlePasswordReset} disabled={isSubmitting} className="password-reset-button disabled:opacity-50">
             Forgot password?
           </button>
         )}
 
-        {resetSent && <p role="status" className="rounded-xl border border-emerald-400/25 bg-emerald-500/10 px-3 py-2.5 text-sm text-emerald-200">Reset email sent. Check your inbox.</p>}
+        {resetSent && <p role="status" className="alert-success">Reset email sent. Check your inbox.</p>}
 
         <p className="text-center text-sm text-slate-400">
           {isLogin ? "New to Luma Todo?" : "Already have an account?"}{" "}

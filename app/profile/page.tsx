@@ -1,20 +1,23 @@
 "use client";
 
 import Link from "next/link";
-import { useSyncExternalStore } from "react";
+import { useCallback, useState, useSyncExternalStore } from "react";
 import { useAuthState } from "react-firebase-hooks/auth";
 import { auth } from "../../firebase";
 import AccountSecurity from "../components/AccountSecurity";
 import PageShell from "../components/PageShell";
+import ProfileCustomizer from "../components/ProfileCustomizer";
 
 export default function ProfilePage() {
   const [user] = useAuthState(auth);
   const isHydrated = useSyncExternalStore(() => () => undefined, () => true, () => false);
+  const [photoUrl, setPhotoUrl] = useState("");
+  const handlePhotoChange = useCallback((nextPhotoUrl: string) => setPhotoUrl(nextPhotoUrl), []);
 
   if (!isHydrated) {
     return (
-      <main className="flex min-h-screen items-center justify-center px-4 py-6 sm:p-8">
-        <div className="w-full max-w-lg rounded-[28px] border border-violet-400/20 bg-slate-900/75 p-8 shadow-2xl shadow-violet-950/40 backdrop-blur-xl">
+      <main className="page-frame flex items-center justify-center">
+        <div className="panel w-full max-w-lg p-8">
           <div className="h-64 animate-pulse rounded-2xl bg-slate-800/80" />
         </div>
       </main>
@@ -23,48 +26,59 @@ export default function ProfilePage() {
 
   if (!user) {
     return (
-      <main className="flex min-h-screen items-center justify-center px-4 py-6 sm:p-8">
-        <div className="rounded-2xl border border-white/10 bg-slate-900/75 p-8 text-center shadow-xl">
-          <p className="mb-4 text-xl font-semibold text-white">Please login first.</p>
-          <Link href="/login" className="rounded-xl bg-gradient-to-r from-violet-500 to-cyan-400 px-4 py-2 font-semibold text-white">
-            Go to login
+      <PageShell eyebrow="Account access" title="Your profile is waiting for you">
+        <section className="profile-access-card">
+          <div className="profile-access-icon" aria-hidden="true">
+            ◇
+          </div>
+          <h2 className="profile-access-title">Sign in to open your profile</h2>
+          <p className="profile-access-copy">
+            Manage your account, security settings, and connected sign-in methods from one place.
+          </p>
+          <div className="profile-access-actions">
+            <Link href="/login" className="button-primary">Go to login</Link>
+            <Link href="/signup" className="button-quiet">Create account</Link>
+          </div>
+          <Link href="/" className="profile-access-home">
+            Return to home
           </Link>
-        </div>
-      </main>
+        </section>
+      </PageShell>
     );
   }
 
   return (
     <PageShell eyebrow="Account" title="Manage your Luma Todo account">
-      <div className="mx-auto w-full max-w-4xl rounded-[28px] border border-violet-400/20 bg-slate-900/75 p-5 shadow-2xl shadow-violet-950/40 backdrop-blur-xl sm:p-8">
-        <div className="mb-6 flex items-center justify-between">
+      <div className="profile-card">
+        <div className="profile-heading">
           <div>
             <p className="text-xs uppercase tracking-[0.28em] text-violet-300">Profile</p>
             <h2 className="mt-2 text-3xl font-bold text-white">My Account</h2>
           </div>
-          <div className="flex h-14 w-14 items-center justify-center rounded-full bg-gradient-to-br from-violet-500 to-cyan-400 text-xl font-bold text-white">
-            {user.email?.charAt(0).toUpperCase() ?? "U"}
+          <div className="profile-avatar">
+            {photoUrl ? <img src={photoUrl} alt="Your profile" /> : user.email?.charAt(0).toUpperCase() ?? "U"}
           </div>
         </div>
 
-        <div className="space-y-4 rounded-2xl border border-white/10 bg-slate-950/60 p-5">
-          <div>
-            <p className="text-sm text-slate-400">Email</p>
-            <p className="mt-1 text-lg font-medium text-white">{user.email}</p>
+        <div className="profile-summary">
+          <div className="profile-info-row">
+            <span className="profile-info-icon" aria-hidden="true">@</span>
+            <div className="profile-info-copy"><span className="profile-info-label">Email address</span><strong>{user.email}</strong></div>
           </div>
-          <div>
-            <p className="text-sm text-slate-400">Status</p>
-            <p className="mt-1 text-lg font-medium text-emerald-300">Active</p>
+          <div className="profile-info-row">
+            <span className="profile-info-icon profile-info-icon-success" aria-hidden="true">✓</span>
+            <div className="profile-info-copy"><span className="profile-info-label">Account status</span><strong className="profile-status-pill">Active</strong></div>
           </div>
         </div>
 
+        <ProfileCustomizer user={user} onPhotoChange={handlePhotoChange} />
         <AccountSecurity user={user} />
 
-        <div className="mt-6 flex flex-col gap-3 sm:flex-row">
-          <button onClick={() => auth.signOut()} className="min-h-12 flex-1 rounded-xl bg-gradient-to-r from-rose-500 to-orange-400 px-4 py-3 font-semibold text-white">
+        <div className="profile-actions">
+          <button onClick={() => auth.signOut()} className="button-danger">
             Logout
           </button>
-          <Link href="/" className="flex min-h-12 flex-1 items-center justify-center rounded-xl border border-white/10 bg-white/5 px-4 py-3 text-center font-semibold text-white hover:bg-white/10">
+          <Link href="/" className="button-quiet">
             Back home
           </Link>
         </div>
